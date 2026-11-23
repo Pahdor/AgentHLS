@@ -1,0 +1,26 @@
+{
+  "model": "Qwen3-Coder-30B-A3B-Instruct-FP8",
+  "input_prompts": "benchmark/input_prompts.json",
+  "output_dir": "../../results/bench4hls/qwen3-coder-30b",
+  "output_json": "../../results/bench4hls/qwen3-coder-30b/output.json",
+  "generation": {
+    "max_new_tokens": 8192,
+    "temperature": 1.0
+  },
+  "openai_compatible": {
+    "base_url": "http://127.0.0.1:8000/v1",
+    "api_key": "EMPTY",
+    "timeout_seconds": 1200
+  },
+  "huggingface": {
+    "use_4bit": false,
+    "max_seq_length": 32768
+  },
+  "parallel_workers": 1,
+  "xilinx": {
+    "version": "2025.2.1",
+    "vitis_bin": "",
+    "vivado_bin": "",
+    "skip_power": true
+  }
+}
