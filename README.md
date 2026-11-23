@@ -26,10 +26,10 @@ docs/                    Public server handoff template
 
 ## A6000 server
 
-Clone the repository, prepare a Python environment containing PyTorch,
-Transformers, and vLLM, then download the model with:
+Clone the repository and create the A6000 environment with `uv`:
 
 ```bash
+./deployment/a6000/setup.sh
 ./deployment/a6000/download_model.sh
 ```
 
@@ -47,12 +47,10 @@ vLLM service bound to loopback when using the SSH tunnel.
 
 ## V80 server
 
-Install the benchmark dependencies and copy the local configuration:
+Create the V80 environment and copy the optional local configuration:
 
 ```bash
-python3 -m venv .venv-bench4hls
-. .venv-bench4hls/bin/activate
-python -m pip install -r vendor/Bench4HLS/requirements.txt
+./evaluation/v80/setup.sh
 cp vendor/Bench4HLS/bench4hls_config.example.json \
    vendor/Bench4HLS/bench4hls_config.json
 ```
@@ -62,7 +60,8 @@ local API URL in `bench4hls_config.json`, and run the first single-sample
 baseline:
 
 ```bash
-BENCH4HLS_PYTHON="$PWD/.venv-bench4hls/bin/python" \
+BENCH4HLS_PYTHON="$PWD/.venv-v80/bin/python" \
+BENCH4HLS_BASE_URL="http://127.0.0.1:8100/v1" \
 BENCH4HLS_PASS_AT_K=1 \
 ./evaluation/v80/run_baseline.sh
 ```

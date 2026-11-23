@@ -12,9 +12,15 @@ remain on the V80 host.
 
 ## Runtime choice
 
-Use the A6000 host's Python environment containing PyTorch, Transformers, and
-vLLM. The pinned package inventory used during preparation is recorded in
-`deployment/a6000/requirements.lock`.
+Use `uv` to create the project-managed environment. Do not install the runtime
+packages into the system Python:
+
+```bash
+./deployment/a6000/setup.sh
+```
+
+The setup creates `.venv-a6000/`, which is ignored by Git. The dependency
+groups in the repository root `pyproject.toml` are the authoritative source.
 
 The launcher defaults to physical GPU 3, tensor parallel size 1, and a 32K
 context. Change `QWEN_VISIBLE_GPUS` only after checking active processes
@@ -22,8 +28,7 @@ with `nvidia-smi`.
 
 ## Start the service
 
-After the model download has completed and the local vLLM environment is
-active:
+After the model download has completed:
 
 ```bash
 QWEN_VISIBLE_GPUS=3 \

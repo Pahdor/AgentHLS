@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-PYTHON="${QWEN_PYTHON:-python3}"
+PYTHON="${QWEN_PYTHON:-${ROOT}/.venv-a6000/bin/python}"
 MODEL_PATH="${QWEN_MODEL_PATH:-${ROOT}/models/Qwen3-Coder-30B-A3B-Instruct-FP8}"
 SERVED_MODEL="${QWEN_SERVED_MODEL:-Qwen3-Coder-30B-A3B-Instruct-FP8}"
 VISIBLE_GPUS="${QWEN_VISIBLE_GPUS:-3}"
@@ -37,7 +37,14 @@ printf '%s\n' "${SERVED_MODEL}" > "${RUN_DIR}/served_model.txt"
 printf '%s\n' "${VISIBLE_GPUS}" > "${RUN_DIR}/visible_gpus.txt"
 printf '%s\n' "${TP_SIZE}" > "${RUN_DIR}/tensor_parallel_size.txt"
 printf '%s\n' "${MAX_MODEL_LEN}" > "${RUN_DIR}/max_model_len.txt"
-"${PYTHON}" -m pip freeze > "${RUN_DIR}/environment_pip_freeze.txt" || true
+if ! "${PYTHON}" -m pip freeze > "${RUN_DIR}/environment_pip_freeze.txt" 2>/dev/null; then
+  "${PYTHON}" - <<'PY' > "${RUN_DIR}/environment_pip_freeze.txt"
+from importlib.metadata import distributions
+
+for dist in sorted(distributions(), key=lambda item: item.metadata["Name"].lower()):
+    print(f'{dist.metadata["Name"]}=={dist.version}')
+PY
+fi
 sha256sum "${MODEL_PATH}/config.json" \
   "${MODEL_PATH}/model.safetensors.index.json" \
   "${MODEL_PATH}/generation_config.json" 2>/dev/null \

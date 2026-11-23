@@ -61,7 +61,7 @@ def load_config(script_dir: Path, raw: Optional[dict[str, Any]] = None) -> Bench
     oa = raw.get("openai_compatible") or {}
     xi = raw.get("xilinx") or {}
 
-    model = raw.get("model")
+    model = os.environ.get("BENCH4HLS_MODEL", raw.get("model"))
     if not model:
         raise ValueError("bench4hls_config.json: 'model' is required")
 
@@ -70,20 +70,29 @@ def load_config(script_dir: Path, raw: Optional[dict[str, Any]] = None) -> Bench
     return BenchConfig(
         model=model,
         input_prompts=_resolve(script_dir, inp) or (script_dir / inp).resolve(),
-        output_dir=_resolve(script_dir, raw.get("output_dir")),
-        output_json=_resolve(script_dir, raw.get("output_json")),
+        output_dir=_resolve(
+            script_dir,
+            os.environ.get("BENCH4HLS_OUTPUT_DIR", raw.get("output_dir")),
+        ),
+        output_json=_resolve(
+            script_dir,
+            os.environ.get("BENCH4HLS_OUTPUT_JSON", raw.get("output_json")),
+        ),
         max_new_tokens=int(gen.get("max_new_tokens", 30000)),
         temperature=float(gen.get("temperature", 1.0)),
         hf_use_4bit=bool(hf.get("use_4bit", True)),
         hf_max_seq_length=int(hf.get("max_seq_length", 8192)),
         ollama_host=str(ol.get("host", "http://localhost:11434")),
         ollama_timeout=int(ol.get("timeout_seconds", 600)),
-        openai_base_url=str(oa.get("base_url", "http://127.0.0.1:8000/v1")),
-        openai_api_key=str(oa.get("api_key", "EMPTY")),
+        openai_base_url=os.environ.get(
+            "BENCH4HLS_BASE_URL",
+            str(oa.get("base_url", "http://127.0.0.1:8000/v1")),
+        ),
+        openai_api_key=os.environ.get("BENCH4HLS_API_KEY", str(oa.get("api_key", "EMPTY"))),
         openai_timeout=int(oa.get("timeout_seconds", 1200)),
         xilinx_version=str(xi.get("version", "2025.2.1")),
-        vitis_bin=xi.get("vitis_bin") or None,
-        vivado_bin=xi.get("vivado_bin") or None,
+        vitis_bin=os.environ.get("BENCH4HLS_VITIS_BIN") or xi.get("vitis_bin") or None,
+        vivado_bin=os.environ.get("BENCH4HLS_VIVADO_BIN") or xi.get("vivado_bin") or None,
         skip_power=bool(xi.get("skip_power", False)),
         parallel_workers=int(raw.get("parallel_workers", 1)),
         design_timeout_seconds=DESIGN_TIMEOUT_SECONDS,

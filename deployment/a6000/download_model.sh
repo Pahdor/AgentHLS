@@ -8,7 +8,9 @@ MAX_WORKERS="${QWEN_DOWNLOAD_WORKERS:-8}"
 
 MODELSCOPE_BIN="${MODELSCOPE_BIN:-}"
 if [[ -z "${MODELSCOPE_BIN}" ]]; then
-  for candidate in "$(command -v modelscope 2>/dev/null || true)"; do
+  for candidate in \
+    "${ROOT}/.venv-a6000/bin/modelscope" \
+    "$(command -v modelscope 2>/dev/null || true)"; do
     if [[ -x "${candidate}" ]]; then
       MODELSCOPE_BIN="${candidate}"
       break

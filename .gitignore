@@ -23,5 +23,11 @@ vllm_runs/
 .agents/
 .aws/
 .codex/
-handoff_llm_hls_servers.md
 .venv-bench4hls/
+.venv-a6000/
+.venv-v80/
+.uv-cache/
+*.safetensors
+*.gguf
+handoff_llm_hls_servers.md
+docs/handoff_llm_hls_servers.md

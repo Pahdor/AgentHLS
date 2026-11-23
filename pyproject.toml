@@ -1,0 +1,39 @@
+[project]
+name = "agent-hls"
+version = "0.1.0"
+description = "Two-server Qwen and Bench4HLS baseline for HLS code generation"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "PyYAML>=6.0",
+  "requests>=2.31",
+]
+
+[dependency-groups]
+v80 = [
+  "pytest>=8.0",
+]
+a6000 = [
+  "accelerate>=1.8",
+  "huggingface-hub==0.36.0",
+  "modelscope>=1.30",
+  "openai>=2.16",
+  "safetensors==0.7.0",
+  "transformers==4.57.3",
+  "vllm==0.15.0",
+  "torch==2.9.1",
+]
+
+[tool.uv]
+default-groups = ["v80"]
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
